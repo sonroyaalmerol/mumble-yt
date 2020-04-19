@@ -2,7 +2,7 @@ const noodleJS = require('noodle.js')
 const { YouTube } = require('popyt')
 const youtubeStream = require('youtube-audio-stream')
 
-const youtube = new YouTube('AIzaSyArBFTlqt7nt91J70adVZuf4aGz3IrC6u8')
+const youtube = new YouTube('AIzaSyDR91-KkUJS0NymwsXMGgjbrrzIBW6Ry2Q')
 
 const client = new noodleJS({
   url: '127.0.0.1',
