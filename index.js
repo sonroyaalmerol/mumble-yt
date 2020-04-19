@@ -13,10 +13,12 @@ const client = new noodleJS({
 
 var queue = []
 var currentPlaying = 0
+var volume = 1
 
 const play = (video) => {
   client.voiceConnection.playStream(youtubeStream(video.url))
   client.sendMessage(`Now playing: ${video.title}`)
+  client.voiceConnection.setVolume(volume)
 }
 
 const addToQueue = async (q) => {
@@ -86,7 +88,8 @@ client.on('message', async message => {
   } else if (message.content.startsWith('.remove ')) {
     removeQueue(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
   } else if (message.content.startsWith('.volume ')) {
-    client.voiceConnection.setVolume(parseFloat(message.content.substr(message.content.indexOf(' ')+1))/100)
+    volume = parseFloat(message.content.substr(message.content.indexOf(' ')+1))/100
+    client.voiceConnection.setVolume(volume)
   }
 })
 
