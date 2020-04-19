@@ -24,7 +24,7 @@ const stopTimer = (duration) => new Promise((resolve, reject) => {
     } catch (err) {
       reject(err)
     }
-  }, (duration+1)*1000)
+  }, ((duration)*1000)-100)
 })
 
 const play = (video) => {
