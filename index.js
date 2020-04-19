@@ -2,7 +2,7 @@ const noodleJS = require('noodle.js')
 const { YouTube } = require('popyt')
 const youtubeStream = require('youtube-audio-stream')
 
-const youtube = new YouTube('AIzaSyDR91-KkUJS0NymwsXMGgjbrrzIBW6Ry2Q')
+var youtube = new YouTube('AIzaSyDR91-KkUJS0NymwsXMGgjbrrzIBW6Ry2Q')
 
 const client = new noodleJS({
   url: '127.0.0.1',
@@ -47,7 +47,12 @@ const play = (video) => {
 const addToQueue = async (q) => {
   var query = q.replace(/(<([^>]+)>)/ig,"")
   var video = { title: '', url: '', duration: 0 }
-  var result = await youtube.getVideo(query)
+  try {
+    var result = await youtube.getVideo(query)
+  } catch (err) {
+    youtube = new YouTube('AIzaSyArBFTlqt7nt91J70adVZuf4aGz3IrC6u8')
+    var result = await youtube.getVideo(query)
+  }
   video = { title: result.title, url: result.url, duration: result.seconds + (result.minutes*60) }
 
   console.log(video)
