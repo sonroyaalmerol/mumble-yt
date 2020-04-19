@@ -86,7 +86,7 @@ client.on('message', async message => {
   } else if (message.content.startsWith('.remove ')) {
     removeQueue(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
   } else if (message.content.startsWith('.volume ')) {
-    client.voiceConnection.setVolume(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
+    client.voiceConnection.setVolume(parseFloat(message.content.substr(message.content.indexOf(' ')+1))/100)
   }
 })
 
