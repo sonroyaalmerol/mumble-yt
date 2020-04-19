@@ -48,7 +48,7 @@ const addToQueue = async (q) => {
   var query = q.replace(/(<([^>]+)>)/ig,"")
   var video = { title: '', url: '', duration: 0 }
   var result = await youtube.getVideo(query)
-  video = { title: result.title, url: query, duration: result.seconds + (result.minutes*60) }
+  video = { title: result.title, url: result.url, duration: result.seconds + (result.minutes*60) }
 
   console.log(video)
   client.sendMessage(`Adding ${ video.title } to queue.`)
