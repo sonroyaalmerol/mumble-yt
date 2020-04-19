@@ -16,6 +16,8 @@ var currentPlaying = 0
 var volume = 1
 
 const play = (video) => {
+  console.log(client.voiceConnection.getVolume())
+  client.voiceConnection.stopStream()
   client.voiceConnection.playStream(youtubeStream(video.url))
   client.sendMessage(`Now playing: ${video.title}`)
   client.voiceConnection.setVolume(volume)
