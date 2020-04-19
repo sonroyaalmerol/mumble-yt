@@ -6,7 +6,7 @@ const { validateUrl } = require('youtube-validate')
 const youtube = new YouTube('AIzaSyArBFTlqt7nt91J70adVZuf4aGz3IrC6u8')
 
 const client = new noodleJS({
-  url: '18.163.117.60',
+  url: '127.0.0.1',
   port: '64738',
   name: 'DemocraticMusic'
 })
@@ -85,6 +85,8 @@ client.on('message', async message => {
     printQueue()
   } else if (message.content.startsWith('.remove ')) {
     removeQueue(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
+  } else if (message.content.startsWith('.volume ')) {
+    client.voiceConnection.setVolume(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
   }
 })
 
