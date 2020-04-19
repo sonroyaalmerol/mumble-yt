@@ -1,7 +1,6 @@
 const noodleJS = require('noodle.js')
 const { YouTube } = require('popyt')
 const youtubeStream = require('youtube-audio-stream')
-const { validateUrl } = require('youtube-validate')
 
 const youtube = new YouTube('AIzaSyArBFTlqt7nt91J70adVZuf4aGz3IrC6u8')
 
@@ -16,7 +15,7 @@ var currentPlaying = 0
 var volume = 1
 var currentTimer = setTimeout(() => {}, 0)
 
-const stopTimer = (duration) => new Promise((resolve, reject) => {
+const videoTimer = (duration) => new Promise((resolve, reject) => {
   currentTimer = setTimeout(() => {
     try {
       client.voiceConnection.stopStream()
@@ -39,11 +38,8 @@ const play = (video) => {
     client.voiceConnection.stopStream()
     nextVideo()
   })
-}
 
-const playWithDuration = (video) => {
-  play(video)
-  stopTimer(video.duration).then(() => {
+  videoTimer(video.duration).then(() => {
     nextVideo()
   })
 }
@@ -51,20 +47,14 @@ const playWithDuration = (video) => {
 const addToQueue = async (q) => {
   var query = q.replace(/(<([^>]+)>)/ig,"")
   var video = { title: '', url: '', duration: 0 }
-  try {
-    await validateUrl(query)
-    var result = await youtube.getVideo(query)
-    video = { title: result.title, url: query, duration: result.seconds + (result.minutes*60) }
-  } catch (err) {
-    var result = await youtube.searchVideos(query, 1)
-    var details = await youtube.getVideo(result.results[0].url)
-    video = { title: result.results[0].title, url: result.results[0].url, duration: details.seconds + (details.minutes*60) }
-  }
+  var result = await youtube.getVideo(query)
+  video = { title: result.title, url: query, duration: result.seconds + (result.minutes*60) }
+
   console.log(video)
   client.sendMessage(`Adding ${ video.title } to queue.`)
   if (queue.length === 0) {
     queue.push(video)
-    playWithDuration(video)
+    play(video)
   } else {
     queue.push(video)
   }
@@ -76,7 +66,7 @@ const nextVideo = () => {
     currentPlaying = 0
   }
   if(queue.length > 0) {
-    playWithDuration(queue[currentPlaying])
+    play(queue[currentPlaying])
   }
 }
 
@@ -95,6 +85,15 @@ const removeQueue = (x) => {
   var index = x-1
   client.sendMessage(`Removing ${queue[index].title} from queue.`)
   queue.splice(index, 1)
+}
+
+const reconnect = () => {
+  clearTimeout(currentTimer)
+  client.destroy()
+  setTimeout(() => {
+    client.connect()
+    nextVideo()
+  }, 2000)
 }
 
 client.on('message', async message => {
@@ -120,10 +119,12 @@ client.on('message', async message => {
 
 client.voiceConnection.on('error', error => {
   console.log(error)
+  reconnect()
 })
 
 client.on('error', error => {
   console.log(error)
+  reconnect()
 })
 
 client.connect()
