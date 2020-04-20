@@ -59,7 +59,7 @@ class Video {
 
   stop() {
     client.voiceConnection.stopStream()
-    this.vidStream.destroy()
+    this.vidStream.close()
     clearTimeout(this._currentTimer)
   }
 
