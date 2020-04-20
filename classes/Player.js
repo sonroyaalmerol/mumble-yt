@@ -55,7 +55,7 @@ class Player {
       this.currentPlaying = 0
     }
     if(this.videos.length > 0) {
-      this.videos[this.currentPlaying].play(this.volume).then(() => {
+      this.videos[this.currentPlaying].play(this._volume).then(() => {
         this.next()
       })
     }
