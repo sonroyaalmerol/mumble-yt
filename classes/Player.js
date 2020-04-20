@@ -68,6 +68,21 @@ class Player {
     client.voiceConnection.setVolume(this._volume)
   }
 
+  setLoop(loop) {
+    if (loop < 0 || loop > 2) {
+      client.sendMessage(`Invalid option for loop. (0 for no loop, 1 for loop current song, 2 for loop queue)`)
+    } else {
+      this.loop = loop
+      if (loop === 0) {
+        client.sendMessage('Loop disabled.')
+      } else if (loop === 1) {
+        client.sendMessage('Looping current song.')
+      } else {
+        client.sendMessage('Looping queue.')
+      }
+    }
+  }
+
   hasVideos() {
     return this.videos.length > 0
   }

@@ -15,23 +15,10 @@ class Video {
   async init(q) {
     var api = 0
     var query = q.replace(/(<([^>]+)>)/ig,"")
-    var result = null
-
-    while (!result) {
-      try {
-        result = await yt[api].getVideo(query)
-      } catch (err) {
-        result = null
-        api++
-        if(api >= yt.length) {
-          throw "Youtube API quota reached!"
-        }
-      }
-    }
-
+    var result = await yt(query)
     this._title = result.title
     this._url = result.url
-    this._duration = result.seconds + (result.minutes*60)
+    this._duration = result.duration
     this._currentTimer = setTimeout(() => {}, 0)
   }
 
@@ -40,7 +27,7 @@ class Video {
     const videoTimer = (duration) => new Promise((resolve, reject) => {
       this._currentTimer = setTimeout(() => {
         try {
-          client.voiceConnection.stopStream()
+          this.stop()
           resolve()
         } catch (err) {
           reject(err)
@@ -53,13 +40,12 @@ class Video {
     client.sendMessage(`Now playing: ${this._title}`)
 
     client.voiceConnection.setVolume(volume)
-
     await videoTimer(this._duration)
   }
 
   stop() {
+    this.vidStream.end()
     client.voiceConnection.stopStream()
-    this.vidStream.close()
     clearTimeout(this._currentTimer)
   }
 

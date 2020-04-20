@@ -42,15 +42,19 @@ client.on('message', async message => {
 
   } else if (message.content.startsWith('.volume ')) {
     player.setVolume(parseFloat(message.content.substr(message.content.indexOf(' ')+1)))
+  } else if (message.content.startsWith('.loop ')) {
+    player.setLoop(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
   }
 })
 
 client.voiceConnection.on('error', error => {
+  console.log('Voice Connection error:')
   console.log(error)
   reconnect()
 })
 
 client.on('error', error => {
+  console.log('Mumble error:')
   console.log(error)
   reconnect()
 })

@@ -1,8 +1,20 @@
-const { YouTube } = require('popyt')
+const url = require('yt-scraper')
+const search = require('scrape-youtube')
+const { validateUrl } = require('youtube-validate')
 
-module.exports = [
-  new YouTube('AIzaSyDR91-KkUJS0NymwsXMGgjbrrzIBW6Ry2Q'),
-  new YouTube('AIzaSyArBFTlqt7nt91J70adVZuf4aGz3IrC6u8'),
-  new YouTube('AIzaSyC419OR1p_FoFTGr3PHhMNNcoKPOQPTYPQ'),
-  new YouTube('AIzaSyCkgq6-UHFk4Wg3xCHNBVuwmByOKS7ZKUQ')
-]
+module.exports = async (query) => {
+  var details = {}
+  try {
+    await validateUrl(query)
+    var tmp = await url.videoInfo(query)
+    details.title = tmp.title
+    details.url = tmp.url
+    details.duration = tmp.length
+  } catch (err) {
+    var tmp = await search.search(query, { limit: 1, type: 'video' })
+    details.title = tmp[0].title
+    details.url = tmp[0].link
+    details.duration = tmp[0].duration
+  }
+  return details
+}
