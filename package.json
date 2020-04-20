@@ -1,10 +1,20 @@
 {
-  "name": "mumble-music",
-  "version": "1.0.0",
+  "name": "mumble-yt",
+  "description": "A Mumble bot for streaming Youtube with queuing features.",
+  "version": "1.0.1",
   "main": "index.js",
   "license": "MIT",
   "bin": {
     "mumble-yt": "./index.js"
+  },
+  "author": {
+    "name": "Son Roy Almerol",
+    "email": "sonroya.almerol@gmail.com"
+  },
+  "homepage": "https://github.com/sonroyaalmerol/mumble-yt#readme",
+  "bugs": {
+    "url": "https://github.com/sonroyaalmerol/mumble-yt/issues",
+    "email": "sonroya.almerol@gmail.com"
   },
   "dependencies": {
     "node-gyp-install": "^2.2.0",
