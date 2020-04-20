@@ -1,7 +1,7 @@
 const noodleJS = require('noodle.js')
 
 module.exports = new noodleJS({
-  url: 'mumble.mikumaprojects.com',
+  url: '127.0.0.1',
   port: '64738',
   name: 'DemocraticMusic'
 })
