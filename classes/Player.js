@@ -12,7 +12,9 @@ class Player {
     client.sendMessage(`Adding ${ video.title } to queue.`)
     if (this.videos.length === 0) {
       this.videos.push(video)
-      video.play(this._volume)
+      video.play(this._volume).then(() => {
+        this.next()
+      })
     } else {
       this.videos.push(video)
     }
