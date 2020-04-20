@@ -1,7 +1,17 @@
-const client = require('./utils/mumble')
+#!/usr/bin/env node
+
+const yargs = require("yargs")
+
+const options = yargs
+ .usage("Usage: -u <url> -n <name> -p <password>")
+ .option("u", { alias: "url", describe: "Mumble Server URL with Port", type: "string", demandOption: true })
+ .option("n", { alias: "name", describe: "Bot Username", type: "string", demandOption: true })
+ .option("p", { alias: "password", describe: "Bot Password", type: "string", demandOption: false })
+ .argv
+
+const client = require('./utils/mumble')(options)
 const Player = require('./classes/Player')
 const Video = require('./classes/Video')
-
 const player = new Player()
 
 const reconnect = () => {
@@ -42,8 +52,14 @@ client.on('message', async message => {
 
   } else if (message.content.startsWith('.volume ')) {
     player.setVolume(parseFloat(message.content.substr(message.content.indexOf(' ')+1)))
+  
   } else if (message.content.startsWith('.loop ')) {
     player.setLoop(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
+  
+  } else if (message.content === '.help') {
+    message.reply('List of commands: ')
+    message.reply('.play <yt url/keywords> | .stop | .skip | .queue | .remove <number from queue> | .volume <0-100> | .loop <0,1,2>')
+  
   }
 })
 

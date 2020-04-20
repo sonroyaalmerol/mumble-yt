@@ -13,7 +13,6 @@ class Video {
   }
 
   async init(q) {
-    var api = 0
     var query = q.replace(/(<([^>]+)>)/ig,"")
     var result = await yt(query)
     this._title = result.title
