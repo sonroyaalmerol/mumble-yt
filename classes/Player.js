@@ -21,7 +21,7 @@ class Player {
   }
 
   stop() {
-    client.voiceConnection.stopStream()
+    this.videos[this.currentPlaying].stop()
     this.videos = []
     this.currentPlaying = 0
   }

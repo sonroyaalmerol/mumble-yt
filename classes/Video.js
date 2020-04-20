@@ -9,6 +9,7 @@ class Video {
     this._url = ''
     this._duration = 0
     this._currentTimer = setTimeout(() => {}, 0)
+    this.vidStream = null
   }
 
   async init(q) {
@@ -47,8 +48,8 @@ class Video {
       }, ((duration)*1000)-200)
     })
 
-    const vidStream = youtubeStream(this._url)
-    client.voiceConnection.playStream(vidStream)
+    this.vidStream = youtubeStream(this._url)
+    client.voiceConnection.playStream(this.vidStream)
     client.sendMessage(`Now playing: ${this._title}`)
 
     client.voiceConnection.setVolume(volume)
@@ -58,6 +59,7 @@ class Video {
 
   stop() {
     client.voiceConnection.stopStream()
+    this.vidStream.destroy()
     clearTimeout(this._currentTimer)
   }
 
