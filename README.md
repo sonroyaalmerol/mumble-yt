@@ -1,6 +1,6 @@
-# Mumble Youtube Bot
+# Mumble YouTube Bot
 
-A Mumble Bot purely for streaming from Youtube. Features include basic music player functionalities such as play, stop, skip, list queue, remove from queue, loop etc.
+A Mumble Bot purely for streaming from YouTube. Features include basic music player functionalities such as play, stop, skip, list queue, remove from queue, loop etc.
 
 ## Install
 

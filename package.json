@@ -1,6 +1,6 @@
 {
   "name": "mumble-yt",
-  "description": "A Mumble bot for streaming Youtube with queuing features.",
+  "description": "A Mumble bot for streaming YouTube with queuing features.",
   "version": "1.0.3",
   "main": "index.js",
   "license": "MIT",
@@ -16,6 +16,13 @@
     "url": "https://github.com/sonroyaalmerol/mumble-yt/issues",
     "email": "sonroya.almerol@gmail.com"
   },
+  "keywords": [
+    "youtube",
+    "mumble",
+    "stream",
+    "bot",
+    "mumble-yt"
+  ],
   "dependencies": {
     "node-gyp-install": "^2.2.0",
     "noodle.js": "^1.3.0",
