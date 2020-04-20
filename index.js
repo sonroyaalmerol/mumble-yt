@@ -1,15 +1,8 @@
 #!/usr/bin/env node
 
-const yargs = require("yargs")
+require('./utils/yargs')
 
-const options = yargs
- .usage("Usage: -u <url> -n <name> -p <password>")
- .option("u", { alias: "url", describe: "Mumble Server URL with Port", type: "string", demandOption: true })
- .option("n", { alias: "name", describe: "Bot Username", type: "string", demandOption: true })
- .option("p", { alias: "password", describe: "Bot Password", type: "string", demandOption: false })
- .argv
-
-const client = require('./utils/mumble')(options)
+const client = require('./utils/mumble')
 const Player = require('./classes/Player')
 const Video = require('./classes/Video')
 const player = new Player()
