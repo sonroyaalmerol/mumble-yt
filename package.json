@@ -1,7 +1,7 @@
 {
   "name": "mumble-yt",
   "description": "A Mumble bot for streaming YouTube with queuing features.",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "index.js",
   "license": "MIT",
   "bin": {

@@ -21,7 +21,9 @@ class Player {
   }
 
   stop() {
-    this.videos[this.currentPlaying].stop()
+    if (this.videos.length > 0) {
+      this.videos[this.currentPlaying].stop()
+    }
     this.videos = []
     this.currentPlaying = 0
   }

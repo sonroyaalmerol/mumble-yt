@@ -7,6 +7,8 @@ const Player = require('./classes/Player')
 const Video = require('./classes/Video')
 const player = new Player()
 
+var users = 0
+
 const reconnect = () => {
   if (player.hasVideos()) {
     player.currentVideo.clearDuration()
@@ -55,6 +57,17 @@ client.on('message', async message => {
   
   }
   console.log(message)
+})
+
+client.on('userJoin', () => {
+  users++
+})
+
+client.on('userDisconnect', () => {
+  users--
+  if (users <= 0) {
+    player.stop()
+  }
 })
 
 client.voiceConnection.on('error', error => {
