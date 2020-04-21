@@ -54,6 +54,7 @@ client.on('message', async message => {
     message.reply('.play <yt url/keywords> | .stop | .skip | .queue | .remove <number from queue> | .volume <0-100> | .loop <0,1,2>')
   
   }
+  console.log(message)
 })
 
 client.voiceConnection.on('error', error => {

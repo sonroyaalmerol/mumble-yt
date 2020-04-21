@@ -39,10 +39,12 @@ class Player {
       client.sendMessage(`Nothing in queue yet.`)
     }
     var number = 1
+    var toPrint = ''
     this.videos.forEach(video => {
-      client.sendMessage(`${number}.) ${video.title}`)
+      toPrint = toPrint + `${number}.) ${video.title}<br />`
       number++
     })
+    client.sendMessage(toPrint)
   }
 
   next() {
