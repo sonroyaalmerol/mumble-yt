@@ -33,13 +33,13 @@ class Player {
   }
 
   list() {
+    var toPrint = ''
     if(this.videos.length > 0) {
-      client.sendMessage(`Queue list (Now playing #${this.currentPlaying+1}):`)
+      toPrint = `Queue list (Now playing #${this.currentPlaying+1}):<br />`
     } else {
       client.sendMessage(`Nothing in queue yet.`)
     }
     var number = 1
-    var toPrint = ''
     this.videos.forEach(video => {
       toPrint = toPrint + `${number}.) ${video.title}<br />`
       number++
