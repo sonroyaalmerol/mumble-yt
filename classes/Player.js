@@ -10,14 +10,18 @@ class Player {
     this.loop = 2 // 0 for no loop, 1 for loop 1 song, 2 for loop queue
     this._database = new Database()
     this._rev = null
+    this.playing = false
   }
 
   add(video) {
     client.sendMessage(`Adding ${ video.title } to queue.`)
     if (this.videos.length === 0) {
       this.videos.push(video)
+      this.playing = true
       video.play(this._volume).then(() => {
         this.next()
+      }).catch(() => {
+        this.playing = false
       })
     } else {
       this.videos.push(video)
@@ -28,6 +32,7 @@ class Player {
     if (this.videos.length > 0) {
       this.videos[this.currentPlaying].stop()
     }
+    this.playing = false
     this.videos = []
     this.currentPlaying = 0
   }
@@ -60,6 +65,7 @@ class Player {
   next() {
     if(this.videos.length > 0) {
       this.videos[this.currentPlaying].stop()
+      this.playing = false
       this.currentPlaying++
       if (this.currentPlaying >= this.videos.length && this.loop === 2) {
         this.currentPlaying = 0
@@ -69,8 +75,11 @@ class Player {
         this.videos = []
         this.currentPlaying = 0
       }
+      this.playing = true
       this.videos[this.currentPlaying].play(this._volume).then(() => {
         this.next()
+      }).catch(() => {
+        this.playing = false
       })
     } else {
       client.sendMessage(`Nothing in queue yet.`)
@@ -132,19 +141,23 @@ class Player {
       this.stop()
       var number = 1
       var toprint = `Now playing ${playlist._id}: <br />`
-      playlist.playlist.forEach(async (res) => {
+      playlist.playlist.forEach((res) => {
         toprint = toprint + `${number}.) ${res.title}<br />`
         number++
         var vid = new Video()
-        await vid.init(res.url)
-        this.videos.push(vid)
-      })
-
-      if (this.videos.length > 0) {
-        this.videos[0].play(this._volume).then(() => {
-          this.next()
+        vid.init(res.url).then(() => {
+          this.videos.push(vid)
+        }).then(() => {
+          if (this.videos.length > 0 && !this.playing) {
+            this.playing = true
+            this.videos[0].play(this._volume).then(() => {
+              this.next()
+            }).catch(() => {
+              this.playing = false
+            })
+          }
         })
-      }
+      })
 
       this._rev = playlist._rev
       client.sendMessage(toprint)
