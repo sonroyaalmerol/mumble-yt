@@ -9,13 +9,11 @@ const player = new Player()
 
 const reconnect = () => {
   if (player.hasVideos()) {
+    player.savePlaylist('pre-error')
     player.currentVideo.stop()
   }
   client.destroy()
   client.connect()
-  if (player.hasVideos()) {
-    player.next()
-  }
 }
 
 client.on('message', async message => {
@@ -69,7 +67,6 @@ client.on('message', async message => {
 client.voiceConnection.on('error', error => {
   client.sendMessage.reply('Voice Connection error:')
   client.sendMessage.reply(error)
-  player.savePlaylist('pre-error')
   console.log(error)
   reconnect()
 })
@@ -77,7 +74,6 @@ client.voiceConnection.on('error', error => {
 client.on('error', error => {
   client.sendMessage.reply('Mumble error:')
   client.sendMessage.reply(error)
-  player.savePlaylist('pre-error')
   console.log(error)
   reconnect()
 })

@@ -138,26 +138,26 @@ class Player {
   async playPlaylist(name) {
     var playlist = await this._database.getPlaylist(name)
     if (playlist) {
+      
       this.stop()
-      var number = 1
       var toprint = `Now playing ${playlist._id}: <br />`
-      playlist.playlist.forEach((res) => {
-        toprint = toprint + `${number}.) ${res.title}<br />`
-        number++
+
+      for (var i = 0; i < playlist.playlist.length; i++) {
+        var res = playlist.playlist[i]
+        toprint = toprint + `${i+1}.) ${res.title}<br />`
         var vid = new Video()
-        vid.init(res.url).then(() => {
-          this.videos.push(vid)
-        }).then(() => {
-          if (this.videos.length > 0 && !this.playing) {
-            this.playing = true
-            this.videos[0].play(this._volume).then(() => {
-              this.next()
-            }).catch(() => {
-              this.playing = false
-            })
-          }
-        })
-      })
+        await vid.init(res.url)
+        this.videos.push(vid)
+
+        if (i === 0 && !this.playing) {
+          this.playing = true
+          this.videos[0].play(this._volume).then(() => {
+            this.next()
+          }).catch(() => {
+            this.playing = false
+          })
+        }
+      }
 
       this._rev = playlist._rev
       client.sendMessage(toprint)
