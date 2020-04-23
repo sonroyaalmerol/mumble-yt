@@ -33,8 +33,8 @@ class Player {
   }
 
   remove(x) {
-    if (this.videos[x]) {
-      var index = x-1
+    var index = x-1
+    if (this.videos[index]) {
       client.sendMessage(`Removing ${this.videos[index].title} from queue.`)
       this.videos.splice(index, 1)
     } else {
