@@ -1,4 +1,6 @@
 const client = require('../utils/mumble')
+const Database = require('./Database')
+const Video = require('./Video')
 
 class Player {
   constructor() {
@@ -6,6 +8,8 @@ class Player {
     this.currentPlaying = 0
     this._volume = 1
     this.loop = 2 // 0 for no loop, 1 for loop 1 song, 2 for loop queue
+    this._database = new Database()
+    this._rev = null
   }
 
   add(video) {
@@ -29,9 +33,13 @@ class Player {
   }
 
   remove(x) {
-    var index = x-1
-    client.sendMessage(`Removing ${this.videos[index].title} from queue.`)
-    this.videos.splice(index, 1)
+    if (this.videos[x]) {
+      var index = x-1
+      client.sendMessage(`Removing ${this.videos[index].title} from queue.`)
+      this.videos.splice(index, 1)
+    } else {
+      client.sendMessage(`There is nothing in queue #${x}.`)
+    }
   }
 
   list() {
@@ -50,20 +58,22 @@ class Player {
   }
 
   next() {
-    this.videos[this.currentPlaying].stop()
-    this.currentPlaying++
-    if (this.currentPlaying >= this.videos.length && this.loop === 2) {
-      this.currentPlaying = 0
-    } else if (this.currentPlaying >= this.videos.length && this.loop === 1) {
-      this.currentPlaying--
-    } else if (this.currentPlaying >= this.videos.length && this.loop === 0) {
-      this.videos = []
-      this.currentPlaying = 0
-    }
     if(this.videos.length > 0) {
+      this.videos[this.currentPlaying].stop()
+      this.currentPlaying++
+      if (this.currentPlaying >= this.videos.length && this.loop === 2) {
+        this.currentPlaying = 0
+      } else if (this.currentPlaying >= this.videos.length && this.loop === 1) {
+        this.currentPlaying--
+      } else if (this.currentPlaying >= this.videos.length && this.loop === 0) {
+        this.videos = []
+        this.currentPlaying = 0
+      }
       this.videos[this.currentPlaying].play(this._volume).then(() => {
         this.next()
       })
+    } else {
+      client.sendMessage(`Nothing in queue yet.`)
     }
   }
 
@@ -87,6 +97,62 @@ class Player {
     }
   }
 
+  async savePlaylist(name) {
+    if (this.videos.length > 0) {
+      await this._database.newPlaylist(this.videos, name, this._rev)
+      client.sendMessage('Saved current playlist.')
+    } else {
+      client.sendMessage('The queue is currently empty.')
+    }
+  }
+
+  async removePlaylist(name) {
+    try {
+      await this._database.deletePlaylist(name)
+      client.sendMessage(`Removed "${name}" playlist.`)
+    } catch (err) {
+      client.sendMessage(`"${name}" not found. Please use playlist name.`)
+    }
+  }
+
+  async listPlaylist() {
+    var number = 1
+    var toprint = 'Saved playlists: <br />'
+    var playlists = await this._database.getPlaylists()
+    playlists.forEach((res) => {
+      toprint = toprint + `${number}.) ${res._id}<br />`
+      number++
+    })
+    client.sendMessage(toprint)
+  }
+
+  async playPlaylist(name) {
+    var playlist = await this._database.getPlaylist(name)
+    if (playlist) {
+      this.stop()
+      var number = 1
+      var toprint = `Now playing ${playlist._id}: <br />`
+      playlist.playlist.forEach(async (res) => {
+        toprint = toprint + `${number}.) ${res.title}<br />`
+        number++
+        var vid = new Video()
+        await vid.init(res.url)
+        this.videos.push(vid)
+      })
+
+      if (this.videos.length > 0) {
+        this.videos[0].play(this._volume).then(() => {
+          this.next()
+        })
+      }
+
+      this._rev = playlist._rev
+      client.sendMessage(toprint)
+    } else {
+      client.sendMessage('Playlist does not exist!')
+    }
+  }
+
   hasVideos() {
     return this.videos.length > 0
   }
@@ -97,6 +163,10 @@ class Player {
 
   get currentVideo() {
     return this.videos[this.currentPlaying]
+  }
+
+  get database() {
+    return this._database
   }
   
 }

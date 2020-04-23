@@ -33,19 +33,28 @@ class Video {
         }
       }, ((duration)*1000)-200)
     })
+    try {
 
-    this.vidStream = youtubeStream(this._url)
-    client.voiceConnection.playStream(this.vidStream)
-    client.sendMessage(`Now playing: ${this._title}`)
+      this.vidStream = youtubeStream(this._url)
+      client.voiceConnection.playStream(this.vidStream)
+      client.sendMessage(`Now playing: ${this._title}`)
 
-    client.voiceConnection.setVolume(volume)
-    await videoTimer(this._duration)
+      client.voiceConnection.setVolume(volume)
+      await videoTimer(this._duration)
+
+    } catch (err) {
+      client.sendMessage(`Error occurred while playing: ${this._title}`)
+      this.stop()
+    }
   }
 
   stop() {
-    this.vidStream.end()
-    client.voiceConnection.stopStream()
-    clearTimeout(this._currentTimer)
+    if (this.vidStream != null) {
+      this.vidStream.end()
+      client.voiceConnection.stopStream()
+      this.clearDuration()
+      this.vidStream = null
+    }
   }
 
   clearDuration() {

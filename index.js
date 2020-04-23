@@ -7,23 +7,19 @@ const Player = require('./classes/Player')
 const Video = require('./classes/Video')
 const player = new Player()
 
-var users = 0
-
 const reconnect = () => {
   if (player.hasVideos()) {
-    player.currentVideo.clearDuration()
+    player.currentVideo.stop()
   }
   client.destroy()
-  setTimeout(() => {
-    client.connect()
-    if (player.hasVideos()) {
-      player.next()
-    }
-  }, 2000)
+  client.connect()
+  if (player.hasVideos()) {
+    player.next()
+  }
 }
 
 client.on('message', async message => {
-  if (message.content.startsWith('.play ')) {
+  if (message.content.startsWith('.play ') || message.content.startsWith('.p ')) {
     var vid = new Video()
     try {
       await vid.init(message.content.substr(message.content.indexOf(' ')+1))
@@ -51,33 +47,37 @@ client.on('message', async message => {
   } else if (message.content.startsWith('.loop ')) {
     player.setLoop(parseInt(message.content.substr(message.content.indexOf(' ')+1)))
   
+  } else if (message.content.startsWith('.plsave ')) {
+    player.savePlaylist(message.content.substr(message.content.indexOf(' ')+1))
+  
+  } else if (message.content.startsWith('.plremove ')) {
+    player.removePlaylist(message.content.substr(message.content.indexOf(' ')+1))
+  
+  } else if (message.content === '.pl') {
+    player.listPlaylist()
+  
+  } else if (message.content.startsWith('.pl ')) {
+    player.playPlaylist(message.content.substr(message.content.indexOf(' ')+1))
+  
   } else if (message.content === '.help') {
     message.reply('List of commands: ')
     message.reply('.play <yt url/keywords> | .stop | .skip | .queue | .remove <number from queue> | .volume <0-100> | .loop <0,1,2>')
-  
-  }
-  console.log(message)
-})
-
-client.on('userJoin', () => {
-  users++
-})
-
-client.on('userDisconnect', () => {
-  users--
-  if (users <= 0) {
-    player.stop()
+    message.reply('.pl | .pl <playlist name> | .plsave <playlist name> | .plremove <playlist name>')
   }
 })
 
 client.voiceConnection.on('error', error => {
-  console.log('Voice Connection error:')
+  client.sendMessage.reply('Voice Connection error:')
+  client.sendMessage.reply(error)
+  player.savePlaylist('pre-error')
   console.log(error)
   reconnect()
 })
 
 client.on('error', error => {
-  console.log('Mumble error:')
+  client.sendMessage.reply('Mumble error:')
+  client.sendMessage.reply(error)
+  player.savePlaylist('pre-error')
   console.log(error)
   reconnect()
 })
