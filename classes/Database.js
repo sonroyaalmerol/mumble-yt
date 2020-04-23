@@ -25,7 +25,8 @@ class Database {
     rawPlaylist.forEach(video => {
       playlist.push({
         url: video.url,
-        title: video.title
+        title: video.title,
+        duration: video.duration
       })
     })
     try {

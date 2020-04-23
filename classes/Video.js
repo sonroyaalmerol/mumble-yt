@@ -12,6 +12,13 @@ class Video {
     this.vidStream = null
   }
 
+  set({ title, url, duration }) {
+    this._title = title
+    this._url = url
+    this._duration = duration
+    this._currentTimer = setTimeout(() => {}, 0)
+  }
+
   async init(q) {
     var query = q.replace(/(<([^>]+)>)/ig,"")
     var result = await yt(query)

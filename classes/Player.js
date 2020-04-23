@@ -138,7 +138,7 @@ class Player {
   async playPlaylist(name) {
     var playlist = await this._database.getPlaylist(name)
     if (playlist) {
-      
+
       this.stop()
       var toprint = `Now playing ${playlist._id}: <br />`
 
@@ -146,7 +146,11 @@ class Player {
         var res = playlist.playlist[i]
         toprint = toprint + `${i+1}.) ${res.title}<br />`
         var vid = new Video()
-        await vid.init(res.url)
+        if ('duration' in res) {
+          vid.set({ url: res.url, title: res.title, duration: res.duration })
+        } else {
+          await vid.init(res.url)
+        }
         this.videos.push(vid)
 
         if (i === 0 && !this.playing) {
