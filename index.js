@@ -4,7 +4,6 @@ require('./utils/yargs')
 
 const client = require('./utils/mumble')
 const Player = require('./classes/Player')
-const Video = require('./classes/Video')
 const player = new Player()
 
 const reconnect = () => {
@@ -16,16 +15,9 @@ const reconnect = () => {
   client.connect()
 }
 
-client.on('message', async message => {
+client.on('message', message => {
   if (message.content.startsWith('.play ') || message.content.startsWith('.p ')) {
-    var vid = new Video()
-    try {
-      await vid.init(message.content.substr(message.content.indexOf(' ')+1))
-      player.add(vid)
-    } catch (err) {
-      console.log(err)
-      message.reply(err)
-    }
+    player.add(message.content.substr(message.content.indexOf(' ')+1))
 
   } else if (message.content === '.stop') {
     player.stop()
@@ -65,15 +57,15 @@ client.on('message', async message => {
 })
 
 client.voiceConnection.on('error', error => {
-  client.sendMessage.reply('Voice Connection error:')
-  client.sendMessage.reply(error)
+  client.sendMessage('Voice Connection error:')
+  client.sendMessage(error)
   console.log(error)
   reconnect()
 })
 
 client.on('error', error => {
-  client.sendMessage.reply('Mumble error:')
-  client.sendMessage.reply(error)
+  client.sendMessage('Mumble error:')
+  client.sendMessage(error)
   console.log(error)
   reconnect()
 })

@@ -8,7 +8,7 @@ class Video {
     this._title = ''
     this._url = ''
     this._duration = 0
-    this._currentTimer = setTimeout(() => {}, 0)
+    this._currentTimer = null
     this.vidStream = null
   }
 
@@ -16,7 +16,7 @@ class Video {
     this._title = title
     this._url = url
     this._duration = duration
-    this._currentTimer = setTimeout(() => {}, 0)
+    this._currentTimer = null
   }
 
   async init(q) {
@@ -25,7 +25,7 @@ class Video {
     this._title = result.title
     this._url = result.url
     this._duration = result.duration
-    this._currentTimer = setTimeout(() => {}, 0)
+    this._currentTimer = null
   }
 
   async play(volume) {
@@ -66,6 +66,7 @@ class Video {
 
   clearDuration() {
     clearTimeout(this._currentTimer)
+    this._currentTimer = null
   }
 
   get title() {

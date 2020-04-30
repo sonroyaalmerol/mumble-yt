@@ -13,19 +13,28 @@ class Player {
     this.playing = false
   }
 
-  add(video) {
+  add(videoString) {
     client.sendMessage(`Adding ${ video.title } to queue.`)
-    if (this.videos.length === 0) {
-      this.videos.push(video)
-      this.playing = true
-      video.play(this._volume).then(() => {
-        this.next()
-      }).catch(() => {
-        this.playing = false
-      })
-    } else {
-      this.videos.push(video)
-    }
+
+    var video = new Video()
+    video.init(videoString).then(() => {
+      if (this.videos.length === 0) {
+        this.videos.push(video)
+        video = null
+        
+        this.playing = true
+        this.videos[0].play(this._volume).then(() => {
+          this.next()
+        }).catch(() => {
+          this.playing = false
+        })
+      } else {
+        this.videos.push(video)
+      }
+    }).catch((err) => {
+      console.log(err)
+      message.reply(err)
+    })
   }
 
   stop() {
